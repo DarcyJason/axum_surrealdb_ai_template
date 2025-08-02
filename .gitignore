@@ -1,1 +1,6 @@
+.vscode
+.idea
+.zed
+
 /target
+logs/

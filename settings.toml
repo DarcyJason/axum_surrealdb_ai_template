@@ -1,0 +1,19 @@
+[frontend]
+url = "http://localhost:3000"
+
+[backend]
+port = 7878
+
+[db]
+surrealdb_host = "localhost:10086"
+surrealdb_root_name = "root"
+surrealdb_root_password = "root"
+surrealdb_namespace = "app"
+surrealdb_database = "backend"
+
+[jwt]
+access_token_secret = "J7uHMe5O001ekwczxhxRgeaMb/7DURzepv7mVDi0VXg"
+refresh_token_secret = "1qolMUoToialBNV7WHiSgJpj84w+e+hXb9trC7Cc85o"
+access_token_expires_in = 900
+refresh_token_expires_in = 604800
+token_cleanup_interval = 3600
