@@ -15,7 +15,7 @@ pub enum DbError {
 }
 
 impl DbError {
-    pub fn to_http_error(self) -> HttpError {
+    pub fn to_http_error(&self) -> HttpError {
         match self {
             DbError::ConnectionFailed(_) => {
                 HttpError::internal_server_error("Database connection failed".to_string())
