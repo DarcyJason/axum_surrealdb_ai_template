@@ -8,7 +8,7 @@ port = 7878
 surrealdb_host = "localhost:10086"
 surrealdb_root_name = "root"
 surrealdb_root_password = "root"
-surrealdb_namespace = "app"
+surrealdb_namespace = "apps"
 surrealdb_database = "backend"
 
 [jwt]

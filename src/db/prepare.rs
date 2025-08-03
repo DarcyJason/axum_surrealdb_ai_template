@@ -4,20 +4,18 @@ use surrealdb::{
     opt::auth::Root,
 };
 
-use crate::config::Config;
+use crate::{config::Config, errors::Result};
 
-pub async fn prepare_surrealdb(config: Config) -> Surreal<Client> {
+pub async fn prepare_surrealdb(config: Config) -> Result<Surreal<Client>> {
     let db: Surreal<Client> = Surreal::<Client>::init();
-    db.connect::<Ws>(config.db.surrealdb_host).await.unwrap();
+    db.connect::<Ws>(config.db.surrealdb_host).await?;
     db.signin(Root {
         username: &config.db.surrealdb_root_name,
         password: &config.db.surrealdb_root_password,
     })
-    .await
-    .unwrap();
+    .await?;
     db.use_ns(config.db.surrealdb_namespace)
         .use_db(config.db.surrealdb_database)
-        .await
-        .unwrap();
-    db
+        .await?;
+    Ok(db)
 }

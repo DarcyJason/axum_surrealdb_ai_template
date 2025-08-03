@@ -9,8 +9,8 @@ use tower_http::cors::CorsLayer;
 use tracing::{error, info};
 
 use crate::{
-    config::Config, db::prepare::prepare_surrealdb, log::log_init, routes::create_routes,
-    state::AppState,
+    config::Config, db::prepare::prepare_surrealdb, errors::Result, log::log_init,
+    routes::create_routes, state::AppState,
 };
 
 mod config;
@@ -26,7 +26,7 @@ mod services;
 mod state;
 mod utils;
 
-pub async fn run() {
+pub async fn run() -> Result<()> {
     log_init();
 
     let config = Config::init();
@@ -40,18 +40,22 @@ pub async fn run() {
         .allow_credentials(true)
         .allow_methods([Method::GET, Method::POST, Method::PUT]);
 
-    let db = prepare_surrealdb(config.clone()).await;
+    let db = prepare_surrealdb(config.clone()).await?;
 
     let app_state = AppState::new(config.clone(), db);
 
     let app_routes = create_routes(Arc::new(app_state)).layer(cors);
 
-    let listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{}", port))
-        .await
-        .unwrap();
+    let listener = match tokio::net::TcpListener::bind(format!("0.0.0.0:{}", port)).await {
+        Ok(listener) => listener,
+        Err(e) => {
+            error!("Failed to bind to port {}: {}", port, e);
+            std::process::exit(1);
+        }
+    };
 
     info!("🚀 The server is running on http://localhost:{}", port);
-    axum::serve(listener, app_routes)
+    if let Err(e) = axum::serve(listener, app_routes)
         .with_graceful_shutdown(async {
             match ctrl_c().await {
                 Ok(()) => {
@@ -65,5 +69,9 @@ pub async fn run() {
             }
         })
         .await
-        .unwrap();
+    {
+        error!("Server error: {}", e);
+        std::process::exit(1);
+    };
+    Ok(())
 }
