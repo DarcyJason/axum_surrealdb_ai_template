@@ -1,11 +1,6 @@
 use std::sync::Arc;
 
-use axum::http::{
-    HeaderValue, Method,
-    header::{ACCEPT, AUTHORIZATION, CONTENT_TYPE},
-};
 use tokio::signal::ctrl_c;
-use tower_http::cors::CorsLayer;
 use tracing::{error, info};
 
 use crate::{
@@ -33,18 +28,11 @@ pub async fn run() -> Result<()> {
 
     let port = config.backend.port;
 
-    let frontend_url = config.frontend.url.clone();
-    let cors = CorsLayer::new()
-        .allow_origin(frontend_url.parse::<HeaderValue>().unwrap())
-        .allow_headers([AUTHORIZATION, ACCEPT, CONTENT_TYPE])
-        .allow_credentials(true)
-        .allow_methods([Method::GET, Method::POST, Method::PUT]);
-
     let db = prepare_surrealdb(config.clone()).await?;
 
     let app_state = AppState::new(config.clone(), db);
 
-    let app_routes = create_routes(Arc::new(app_state)).layer(cors);
+    let app_routes = create_routes(Arc::new(app_state));
 
     let listener = match tokio::net::TcpListener::bind(format!("0.0.0.0:{}", port)).await {
         Ok(listener) => listener,
