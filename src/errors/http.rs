@@ -9,38 +9,6 @@ impl HttpError {
     pub fn new(message: String, status: StatusCode) -> Self {
         Self { message, status }
     }
-    // 300
-    pub fn multiple_choices(message: String) -> Self {
-        Self::new(message, StatusCode::MULTIPLE_CHOICES)
-    }
-    // 301
-    pub fn moved_permanently(message: String) -> Self {
-        Self::new(message, StatusCode::MOVED_PERMANENTLY)
-    }
-    // 302
-    pub fn found(message: String) -> Self {
-        Self::new(message, StatusCode::FOUND)
-    }
-    // 303
-    pub fn see_other(message: String) -> Self {
-        Self::new(message, StatusCode::SEE_OTHER)
-    }
-    // 304
-    pub fn not_modified(message: String) -> Self {
-        Self::new(message, StatusCode::NOT_MODIFIED)
-    }
-    // 305
-    pub fn use_proxy(message: String) -> Self {
-        Self::new(message, StatusCode::USE_PROXY)
-    }
-    // 307
-    pub fn temporary_redirect(message: String) -> Self {
-        Self::new(message, StatusCode::TEMPORARY_REDIRECT)
-    }
-    // 308
-    pub fn permanent_redirect(message: String) -> Self {
-        Self::new(message, StatusCode::PERMANENT_REDIRECT)
-    }
     // 400
     pub fn bad_request(message: String) -> Self {
         Self::new(message, StatusCode::BAD_REQUEST)
