@@ -3,7 +3,7 @@ use thiserror::Error;
 use crate::errors::http::HttpError;
 
 #[derive(Debug, Error)]
-pub enum DbError {
+pub enum SurrealDBError {
     #[error("Connection failed: {0}")]
     ConnectionFailed(String),
     #[error("Query failed: {0}")]
@@ -14,23 +14,23 @@ pub enum DbError {
     Duplicate,
 }
 
-impl DbError {
+impl SurrealDBError {
     pub fn to_http_error(&self) -> HttpError {
         match self {
-            DbError::ConnectionFailed(_) => {
+            SurrealDBError::ConnectionFailed(_) => {
                 HttpError::internal_server_error("Database connection failed".to_string())
             }
-            DbError::QueryFailed(_) => {
+            SurrealDBError::QueryFailed(_) => {
                 HttpError::internal_server_error("Database query failed".to_string())
             }
-            DbError::NotFound => HttpError::not_found("Record not found".to_string()),
-            DbError::Duplicate => HttpError::conflict("Duplicate record".to_string()),
+            SurrealDBError::NotFound => HttpError::not_found("Record not found".to_string()),
+            SurrealDBError::Duplicate => HttpError::conflict("Duplicate record".to_string()),
         }
     }
 }
 
-impl From<surrealdb::Error> for DbError {
+impl From<surrealdb::Error> for SurrealDBError {
     fn from(err: surrealdb::Error) -> Self {
-        DbError::QueryFailed(err.to_string())
+        SurrealDBError::QueryFailed(err.to_string())
     }
 }

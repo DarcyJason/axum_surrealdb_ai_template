@@ -5,16 +5,19 @@ use axum::{
 use serde_json::json;
 use thiserror::Error;
 
-use crate::errors::{db::DbError, jwt::JwtError};
+use crate::errors::{surreal::SurrealDBError, jwt::JwtError, redis::RedisError};
 
-pub mod db;
+pub mod surreal;
 pub mod http;
 pub mod jwt;
+pub mod redis;
 
 #[derive(Debug, Error)]
 pub enum AppError {
     #[error("Database error: {0}")]
-    Database(#[from] DbError),
+    SurrealDB(#[from] SurrealDBError),
+    #[error("Redis error: {0}")]
+    Redis(#[from] RedisError),
     #[error("JWT error: {0}")]
     Jwt(#[from] JwtError),
 }
@@ -24,7 +27,8 @@ pub type Result<T> = std::result::Result<T, AppError>;
 impl IntoResponse for AppError {
     fn into_response(self) -> Response {
         let http_error = match self {
-            AppError::Database(err) => err.to_http_error(),
+            AppError::SurrealDB(err) => err.to_http_error(),
+            AppError::Redis(err) => err.to_http_error(),
             AppError::Jwt(err) => err.to_http_error(),
         };
         let body = Json(json!({
@@ -39,7 +43,7 @@ impl IntoResponse for AppError {
 
 impl From<surrealdb::Error> for AppError {
     fn from(err: surrealdb::Error) -> Self {
-        AppError::Database(DbError::from(err))
+        AppError::SurrealDB(SurrealDBError::from(err))
     }
 }
 

@@ -19,3 +19,8 @@ pub async fn prepare_surrealdb(config: Config) -> Result<Surreal<Client>> {
         .await?;
     Ok(db)
 }
+
+pub async fn prepare_redis(config: Config) -> redis::RedisResult<redis::Client> {
+    let redis_client = redis::Client::open(config.db.redis_host)?;
+    Ok(redis_client)
+}

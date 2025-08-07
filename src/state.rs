@@ -6,10 +6,15 @@ use crate::config::Config;
 pub struct AppState {
     pub config: Config,
     pub db: Surreal<Client>,
+    pub redis_client: redis::Client,
 }
 
 impl AppState {
-    pub fn new(config: Config, db: Surreal<Client>) -> Self {
-        AppState { config, db }
+    pub fn new(config: Config, db: Surreal<Client>, redis_client: redis::Client) -> Self {
+        AppState {
+            config,
+            db,
+            redis_client,
+        }
     }
 }

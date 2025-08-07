@@ -11,6 +11,7 @@ pub struct DB {
     pub surrealdb_root_password: String,
     pub surrealdb_namespace: String,
     pub surrealdb_database: String,
+    pub redis_host: String,
 }
 
 impl DB {
