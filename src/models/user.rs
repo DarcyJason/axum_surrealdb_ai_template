@@ -17,6 +17,6 @@ pub struct User {
     pub role: UserRole,
     pub phone_number: Option<String>,
     pub address: Option<String>,
-    pub created_at: Option<DateTime<Utc>>,
-    pub updated_at: Option<DateTime<Utc>>,
+    pub created_at: DateTime<Utc>,
+    pub updated_at: DateTime<Utc>,
 }

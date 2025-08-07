@@ -24,9 +24,9 @@ mod log;
 mod middlewares;
 mod models;
 mod routes;
-mod services;
 mod state;
 mod utils;
+mod services;
 
 pub async fn run() -> Result<()> {
     log_init();
@@ -39,7 +39,10 @@ pub async fn run() -> Result<()> {
     info!("✅ Connect to SurrealDB successfully!!!");
     init_surrealdb(db.clone()).await?;
 
-    let redis_client = prepare_redis(config.clone()).await.map_err(|e| { AppError::Redis(RedisError::from(e)) })?;
+    let redis_client = prepare_redis(config.clone()).await.map_err(|e| { 
+        error!("❌ Failed to connect to Redis: {}", e);
+        AppError::Redis(RedisError::from(e)) 
+    })?;
     info!("✅ Connect to Redis successfully!!!");
 
     let app_state = AppState::new(config.clone(), db, redis_client);

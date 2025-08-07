@@ -1,8 +1,14 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
+pub enum TokenType {
+    Access,
+    Refresh,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct Claims {
     pub sub: String,
-    pub iat: i64,
-    pub exp: i64,
+    pub exp: usize,
+    pub token_type: TokenType,
 }

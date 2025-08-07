@@ -15,3 +15,5 @@ redis_host = "redis://127.0.0.1/"
 [jwt]
 access_token_secret = "J7uHMe5O001ekwczxhxRgeaMb/7DURzepv7mVDi0VXg="
 access_token_expires_in = 900
+refresh_token_secret = "pyD/P33NtQIf9XoJOvCPtAvqzLIC30e0E1vzPYb2WdU="
+refresh_token_expires_in = 604800 

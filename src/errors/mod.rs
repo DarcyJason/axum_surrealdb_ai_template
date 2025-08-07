@@ -4,32 +4,37 @@ use axum::{
 };
 use serde_json::json;
 use thiserror::Error;
+use tracing::error;
 
-use crate::errors::{surreal::SurrealDBError, jwt::JwtError, redis::RedisError};
+use crate::errors::{jwt::JwtError, password::PasswordErr, redis::RedisError, surreal::SurrealDBError};
 
 pub mod surreal;
 pub mod http;
 pub mod jwt;
 pub mod redis;
+pub mod password;
 
 #[derive(Debug, Error)]
 pub enum AppError {
-    #[error("Database error: {0}")]
+    #[error("SurrealDB error: {0}")]
     SurrealDB(#[from] SurrealDBError),
     #[error("Redis error: {0}")]
     Redis(#[from] RedisError),
     #[error("JWT error: {0}")]
     Jwt(#[from] JwtError),
+    #[error("Password error:")]
+    Password(#[from] PasswordErr),
 }
 
 pub type Result<T> = std::result::Result<T, AppError>;
 
 impl IntoResponse for AppError {
     fn into_response(self) -> Response {
-        let http_error = match self {
+        let http_error = match &self {
             AppError::SurrealDB(err) => err.to_http_error(),
             AppError::Redis(err) => err.to_http_error(),
             AppError::Jwt(err) => err.to_http_error(),
+            AppError::Password(err) => err.to_http_error(),
         };
         let body = Json(json!({
             "error": {

@@ -1,3 +1,4 @@
+use redis::aio::MultiplexedConnection;
 use surrealdb::{
     Surreal,
     engine::remote::ws::{Client, Ws},
@@ -20,7 +21,8 @@ pub async fn prepare_surrealdb(config: Config) -> Result<Surreal<Client>> {
     Ok(db)
 }
 
-pub async fn prepare_redis(config: Config) -> redis::RedisResult<redis::Client> {
+pub async fn prepare_redis(config: Config) -> redis::RedisResult<MultiplexedConnection> {
     let redis_client = redis::Client::open(config.db.redis_host)?;
-    Ok(redis_client)
+    let connection = redis_client.get_multiplexed_async_connection().await?;
+    Ok(connection)
 }

@@ -11,6 +11,7 @@ use crate::{
 
 pub mod protected;
 pub mod public;
+pub mod auth;
 
 pub fn create_routes(app_state: Arc<AppState>) -> Router {
     let cors = create_cors_layer(&app_state.config);
